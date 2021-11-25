@@ -1,10 +1,10 @@
 ---
 output: github_document
 params:
+  main_repo: main-pacotes
   trilha_clean: programacao_para_ciencia_de_dados
-  main_repo: main-intro-programacao
-  turma: 202102-intro-programacao
-  nome_curso: ATUALIZANDO....
+  turma: 202211-pacotes
+  nome_curso: Pacotes
   num_aula: '0'
   download_material: 'FALSE'
 ---
