@@ -37,60 +37,34 @@ if(params$download_material == TRUE){
 
 Fora do horário de aula ou monitoria:
 
-- perguntas gerais sobre o curso deverão ser feitas no Classroom.
+- perguntas gerais sobre o curso deverão ser feitas no Google Classroom.
 
 - perguntas sobre R, principalmente as que envolverem código, deverão ser enviadas no [nosso fórum](https://discourse.curso-r.com/).
 
 
-## Slides
+## [Slides do curso aqui!](https://curso-r.github.io/main-pacotes/slides)
+
+
+## Scripts desenvolvidos em aula
 
 ```{r}
-paths <- CursoRopen:::list_github_files(params$main_repo, "slides/", "[0-9]-.*html$") %>% 
-  tibble::enframe(value = "paths") %>% 
-  dplyr::filter(!stringr::str_detect(paths, "figure-html")) %>% 
-  dplyr::mutate(file_path_sem_extencao = tools::file_path_sans_ext(paths)) %>% 
-  dplyr::select(-name)
-
-
-paths_pdf <- CursoRopen:::list_github_files(params$main_repo, "slides/", "[0-9]-.*pdf$") %>% 
-  tibble::enframe(value = "paths_pdf") %>% 
-  dplyr::mutate(file_path_sem_extencao = tools::file_path_sans_ext(paths_pdf)) %>%
-  dplyr::select(-name)
-
-dplyr::left_join(paths, paths_pdf, by = "file_path_sem_extencao") %>% 
-dplyr::mutate(
-  slide = paths,
-  link = paste0("https://curso-r.github.io/", params$main_repo, "/", slide),
-  slides = glue::glue("[{basename(slide)}]({link})"),
-  slide_pdf = paths_pdf,
-  link_pdf = paste0("https://curso-r.github.io/", params$main_repo, "/", slide_pdf),
-  pdf = glue::glue("[{basename(slide_pdf)}]({link_pdf})")
-) %>% 
-  dplyr::filter(!stringr::str_detect(slide, "_files/")) %>%
-  dplyr::select(slides, pdf) %>% 
-  knitr::kable()
-```
-
-
-## Scripts utilizados em aula
-
-```{r}
-pasta <- "exemplos_de_aula/"
-
-
-knitr::kable(
-  tibble::tibble(
-    script = CursoRopen:::list_github_files(params$main_repo, pasta, ".R$"),
-    link = paste0(
-      "https://github.com/curso-r/",
-      params$turma,
-      "/blob/master/",
-      script
-    )
-  ) %>%
-    dplyr::mutate(script = glue::glue("[{script}]({link})")) %>%
-    dplyr::select(script)
-)
+pasta <- "praticas/"
+aulas <- CursoRopen:::list_github_files(params$turma, pasta, "DESCRIPTION")
+if (length(aulas) > 0) {
+  knitr::kable(
+    tibble::tibble(
+      script = unique(dirname(aulas)),
+      link = paste0(
+        "https://github.com/curso-r/",
+        params$turma,
+        "/blob/main/",
+        script
+      )
+    ) |> 
+      dplyr::mutate(script = glue::glue("[{script}]({link})")) |> 
+      dplyr::select(script)
+  )
+}
 ```
 
 
@@ -101,32 +75,11 @@ tibble::tibble(
   nome = CursoRopen:::list_github_files(params$main_repo, "exercicios/"),
   link = paste0("https://curso-r.github.io/", params$main_repo, "/", nome),
   exercicio = glue::glue("[{nome}]({link})")
-) %>%
-    dplyr::filter(!stringr::str_detect(nome, "resolucao_")) %>% 
-  dplyr::select(exercicio) %>% 
+) |>
+    dplyr::filter(!stringr::str_detect(nome, "resolucao_")) |> 
+  dplyr::select(exercicio) |> 
   knitr::kable()
 ```
-
-
-## Trabalhos finais premiados
-
-```{r echo=FALSE}
-nome_pasta <- "trabalhos_premiados"
-
-tibble::tibble(
-  script = CursoRopen:::list_github_files(params$turma, nome_pasta, ".zip|.rar"),
-  link = paste0(
-    "https://github.com/curso-r/",
-    params$turma,
-    "/raw/master/",
-    script
-  ),
-  pasta_compactada = glue::glue("[{script}]({link})")
-) %>% 
-  dplyr::select(pasta_compactada) %>% 
-  knitr::kable()
-```
-
 
 
 ## Material extra
@@ -136,24 +89,24 @@ Referências extras relacionadas com o conteúdos das aulas, ou materiais que co
 ```{r echo=FALSE, message=FALSE}
 safe_buscar_materiais_extras <- purrr::possibly(.f = function(main_repo = params$main_repo, 
                                                               trilha_clean = params$trilha_clean){
-  library(magrittr, include.only = "%>%")
+  library(magrittr, include.only = "|>")
   googlesheets4::gs4_deauth()
 googledrive::drive_deauth()
 
-id_spreadsheet <- "1YV2vz52u2HXw1IhjrJ7dGhk7sim-9zRM" %>%
-  googledrive::as_id() %>%
-  googledrive::drive_ls() %>%
-  dplyr::filter(name %in% params$trilha_clean) %>%
-  dplyr::pull(id) %>%
+id_spreadsheet <- "1YV2vz52u2HXw1IhjrJ7dGhk7sim-9zRM" |>
+  googledrive::as_id() |>
+  googledrive::drive_ls() |>
+  dplyr::filter(name %in% params$trilha_clean) |>
+  dplyr::pull(id) |>
   googlesheets4::as_sheets_id()
 
 
-id_spreadsheet %>%
-  googlesheets4::read_sheet(stringr::str_remove(main_repo, "main-")) %>%
-  dplyr::mutate(link = glue::glue("[{desc}]({url})")) %>%
-  dplyr::select(-desc,-url) %>%
-  dplyr::arrange(aula) %>%
-  # dplyr::filter(aula <= params$num_aula) %>%
+id_spreadsheet |>
+  googlesheets4::read_sheet(stringr::str_remove(main_repo, "main-")) |>
+  dplyr::mutate(link = glue::glue("[{desc}]({url})")) |>
+  dplyr::select(-desc,-url) |>
+  dplyr::arrange(aula) |>
+ dplyr::filter(aula <= params$num_aula) |>
   knitr::kable(col.names = c("Aula", "Tema", "Descrição")) 
 }, "erro")
 
@@ -192,7 +145,7 @@ if(params$download_material == TRUE){
     "show_downloads: true", '\n',
     "link_material: 'https://github.com/curso-r/{params$main_repo}/raw/master/material_do_curso.zip'", '\n'
     
-    ) %>%
+    ) |>
     readr::write_lines( "_config.yml")
 }
 
@@ -200,7 +153,7 @@ if(params$download_material == FALSE){
   glue::glue('theme: jekyll-theme-minimal', '\n',
     "logo: assets/logo.png", '\n',
     "title: {params$nome_curso}", '\n',
-    "show_downloads: false", '\n') %>%
+    "show_downloads: false", '\n') |>
     readr::write_lines( "_config.yml")
 }
 ```
