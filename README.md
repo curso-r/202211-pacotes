@@ -25,6 +25,7 @@ Fora do horário de aula ou monitoria:
 | script                                                                                                      |
 | :---------------------------------------------------------------------------------------------------------- |
 | [praticas/aula\_1/countrrry](https://github.com/curso-r/202211-pacotes/blob/main/praticas/aula_1/countrrry) |
+| [praticas/aula\_2/countrrry](https://github.com/curso-r/202211-pacotes/blob/main/praticas/aula_2/countrrry) |
 
 ## Lição de casa
 
