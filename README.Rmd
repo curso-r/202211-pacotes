@@ -5,7 +5,7 @@ params:
   trilha_clean: programacao_para_ciencia_de_dados
   turma: 202211-pacotes
   nome_curso: Pacotes
-  num_aula: '1'
+  num_aula: '2'
   download_material: 'FALSE'
 ---
 
