@@ -1,5 +1,5 @@
 Package: countrrry
-Title: What the Package Does (One Line, Title Case)
+Title: Gerar Estatisticas dos Paises
 Version: 0.0.0.9000
 Authors@R: 
     person(
@@ -8,14 +8,15 @@ Authors@R:
       email = "milz.bea@gmail.com", 
       role = c("aut", "cre"),
       comment = c(ORCID = "0000-0002-3064-4486"))
-Description: What the package does (one paragraph).
+Description: Funcoes para gerar estatisticas de dados de paises.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports: 
     dados,
-    dplyr
+    dplyr,
+    usethis
 Depends: 
     R (>= 2.10)
 LazyData: true
